@@ -1,0 +1,3 @@
+{"_id":{"$oid":"642242e4a5730b1640c834bb"},"nome":"Havaianas","descricao":"Chinelo","preco":"30.0","_class":"br.com.pdz.produto.model.Produto"}
+{"_id":{"$oid":"642244d1039a592c21ad1d70"},"nome":"Café","descricao":"Pó de Café","preco":"20.0","_class":"br.com.pdz.produto.model.Produto"}
+{"_id":{"$oid":"642271a5ee05045d870ff49a"},"nome":"Cafée","descricao":"Pó de Café","preco":"2000.0","_class":"br.com.pdz.produto.model.Produto"}
