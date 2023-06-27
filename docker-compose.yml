@@ -4,7 +4,7 @@ services:
 
   produto:
     image: produto:latest
-    restart: on-failure
+    restart: always
     build:
       context: ./produto
       dockerfile: Dockerfile
@@ -19,10 +19,23 @@ services:
     environment:
       DB_HOST: mongo
       KC_HOST: "http://keycloak:8080"
+      SPRING_ADMIN: "http://springadmin:8085"
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+  springadmin:
+    image: springadmin:latest
+    restart: always
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    networks:
+      - mongo-compose-network
 
   mongo:
     image: mongo
+    restart: always
     ports:
       - "27017:27017"
     networks:
@@ -35,7 +48,7 @@ services:
 
   mongo-express:
     image: mongo-express
-    restart: on-failure
+    restart: always
     ports:
       - "8081:8081"
     depends_on:
@@ -53,6 +66,7 @@ services:
   mysql:
     container_name: mysql
     image: mysql:5.7
+    restart: always
     ports:
       - "3306:3306"
     networks:
@@ -69,6 +83,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    restart: always
     ports:
       - "8090:80"
     depends_on:
@@ -83,6 +98,7 @@ services:
   keycloak:
     container_name: keycloak
     image: jboss/keycloak:13.0.1
+    restart: always
     ports:
       - "8083:8080"
     depends_on:
@@ -104,6 +120,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.35.0
+    restart: always
     ports:
       - "9090:9090"
     networks:
@@ -116,10 +133,10 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-    restart: always
 
   grafana:
     image: grafana/grafana
+    restart: always
     ports:
       - "3000:3000"
     depends_on:
@@ -128,8 +145,6 @@ services:
       - mongo-compose-network
     volumes:
       - ./docker_volume/grafana/data:/var/lib/grafana/
-    restart: always
-
 
 networks:
   mongo-compose-network:
