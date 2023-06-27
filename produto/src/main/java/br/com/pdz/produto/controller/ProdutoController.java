@@ -4,6 +4,8 @@ import br.com.pdz.produto.model.Produto;
 import br.com.pdz.produto.model.request.ProdutoRequest;
 import br.com.pdz.produto.model.response.ProdutoResponse;
 import br.com.pdz.produto.repository.ProdutoRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -23,6 +25,7 @@ public class ProdutoController {
     }
 
     @GetMapping
+    @Cacheable("listaDeProdutos")
     public ResponseEntity<List<Produto>> listarProdutos() {
         List<Produto> produtos = produtoRepository.findAll();
         return ResponseEntity.ok(produtos);
@@ -40,6 +43,7 @@ public class ProdutoController {
 
     @PostMapping
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = "listaDeProdutos", allEntries = true)
     public ResponseEntity<Produto> inserirProduto(@RequestBody @Valid ProdutoRequest produtoRequest) {
         Optional<Produto> produtoProvavel = produtoRepository.findByNome(produtoRequest.getNome());
 
@@ -55,6 +59,7 @@ public class ProdutoController {
 
     @PutMapping("/{id}")
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = "listaDeProdutos", allEntries = true)
     public ResponseEntity<Produto> alterarProduto(@RequestBody @Valid ProdutoRequest produtoRequest, @PathVariable String id) {
         try {
             Produto produto = produtoRepository.findById(id).get();
@@ -72,6 +77,7 @@ public class ProdutoController {
 
     @DeleteMapping("/{id}")
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = "listaDeProdutos", allEntries = true)
     public ResponseEntity<?> apagarProduto(@PathVariable String id) {
         Optional<Produto> produtoProvavel = produtoRepository.findById(id);
 
